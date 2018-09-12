@@ -1,4 +1,4 @@
-# webpack-router
+﻿# webpack-router
 router总结
 二、没有simple的cli
 1.创建文件夹vue-cli
@@ -163,5 +163,109 @@ fn(){
 
 14.HTML5 History模式
 在export default new Router下设置mode:'history'，URL 就像正常的 url，例如 http://yoursite.com/user/id
+
+
+一、webpack-simple
+
+1.创建文件夹vue-cli
+
+2.在终端的vue-cli文件夹下
+输入命令：vue init webpack-simple webpack-vue-router-wyq
+按提示配置，下载完成后在vue-cli文件夹中会自动创建文件夹webpack-vue-router-wyq
+在终端输入 cd webpack-router-study切换到当前文件夹下，输入命令npm install 下载在package.json文件里面所依赖的文件，下载完成后输入：npm run dev 自动跳转到页面，即为成功。在package.json文件中可以看到，npm run dev 可以配置为“start”：“npm run dev”以后进行开启页面时，输入npm start就行了，打包命令：npm run build
+
+3.目录结构：
+  build	项目构建(webpack)相关代码
+    config	配置目录，包括端口号等。我们初学可以使用默认的。
+    node_modules	npm 加载的项目依赖模块
+  src	这里是我们要开发的目录，基本上要做的事情都在这个目录里。里面包含了几个目录及文件：
+    assets: 放置一些图片，如logo等。
+    components: 目录里面放了一个组件文件，可以不用。
+  App.vue: 项目入口文件，我们也可以直接将组件写这里，而不使用 components 目录。
+  main.js: 项目的核心文件。
+  static	静态资源目录，如图片、字体等。
+  test	初始测试目录，可删除
+  .xxxx文件	这些是一些配置文件，包括语法配置，git配置等。
+  index.html	首页入口文件，你可以添加一些 meta 信息或统计代码啥的。
+  package.json	项目配置文件。
+  README.md	项目的说明文档，markdown 格式
+7.初学者可以尝试修改src文件夹下的文件
+  在app.vue template里 : 
+    <h2 :title="obj.title">{{obj.name || '请去设置昵称'}}</h2>
+    <h2 @click="fn">{{ '1111'  &&  msg }}</h2>
+      短路表达式：
+        || : 前为false，后为true => true；前为true，后为true/false => true；前后均为false => false，
+        && : 前为false，后为true/false => false；前为true，后为false => false；前后均为true => true
+  创建组件在src下的components中创建js文件并在里面输入内容，如下：
+    <template>
+	    <div class="todoList">
+		    mx
+	    </div>
+    </template>
+    <script>
+    export default {
+	    name:'todoList',
+	    data(){
+		    return {
+			    name : 'wyq'
+		    }
+	    }
+    }
+    </script>
+  在app.vue script里 :
+    // 引入todoList组件
+    import todoList from './components/todoList.vue'
+    export default {
+      // .vue文件是组件
+      // 如果组件很多 通过name字段去区分组件的名字
+      name: 'app',
+      data () {
+        return {
+          msg: 'Welcome to Your Vue.js App',
+          obj : {
+            name:''
+          }
+        }
+      },
+      methods:{
+        fn (){
+        this.obj.name = 'wyq'
+        }
+      },
+      components:{
+        todoList
+      }
+    }
+8.webpack.config.js中一些配置的详情：
+  module.exports = {
+    entry: './src/main.js',
+    output: {
+      // __dirname + '/public'之前的写法
+      // path.resolve(__dirname, './dist'),和上面的用法是一样的
+      path: path.resolve(__dirname, './dist'),
+      //  publicPath: 顾名思义就是一个公共地址，用于处理静态资源的引用地址问题，比如图片的地址路径问题。
+      //  /dist/ 之前是这个 但是我们本地运行报错了
+      // publicPath: './',
+      publicPath: '/dist/',
+      filename: 'build.js'
+      },
+      // 详情：https://segmentfault.com/a/1190000013176083?utm_source=tag-newest
+      resolve: {
+        alias: {
+          'vue$': 'vue/dist/vue.esm.js'
+        },
+        // 在导入语句没带文件后缀时，webpack会自动带上后缀去尝试访问文件是否存在。
+        extensions: ['*', '.js', '.vue', '.json']
+      },
+      // 详情：https://www.jianshu.com/p/c2dd1c195462
+      devServer: {
+        //当使用 html5 history api,将会在响应404时返回index.html。想要开启该功能进行如下设置
+        historyApiFallback: true,
+        noInfo: true,
+        overlay: true
+      },
+      // 关于环境的判断 => 生产环境 与 开发环境
+      if (process.env.NODE_ENV === 'production'){}
+  }
 
 
